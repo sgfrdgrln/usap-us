@@ -8,7 +8,11 @@
  * @module
  */
 
+import type * as conversations from "../conversations.js";
+import type * as friends from "../friends.js";
 import type * as messages from "../messages.js";
+import type * as notifications from "../notifications.js";
+import type * as users from "../users.js";
 
 import type {
   ApiFromModules,
@@ -17,7 +21,11 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  conversations: typeof conversations;
+  friends: typeof friends;
   messages: typeof messages;
+  notifications: typeof notifications;
+  users: typeof users;
 }>;
 
 /**
