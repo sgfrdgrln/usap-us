@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { MessageBubble } from '@/components/MessageBubble'
 import { MessageInput } from '@/components/MessageInput'
+import { CallInterface } from '@/components/CallInterface'
 import { MoreVertical, Phone, Video, Info } from 'lucide-react'
 import {
   DropdownMenu,
@@ -33,6 +34,8 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
   const setTyping = useMutation(api.messages.setTyping)
   
   const [replyTo, setReplyTo] = useState<any>(null)
+  const [isCallActive, setIsCallActive] = useState(false)
+  const [callType, setCallType] = useState<'voice' | 'video'>('voice')
   const scrollRef = useRef<HTMLDivElement>(null)
   const lastMessageRef = useRef<string | null>(null)
 
@@ -76,6 +79,20 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
 
   const handleTyping = async (isTyping: boolean) => {
     await setTyping({ conversationId, isTyping })
+  }
+
+  const handleStartCall = (type: 'voice' | 'video') => {
+    if (conversation?.isGroup) {
+      // Group calls could be implemented with additional logic
+      alert('Group calls are not yet supported')
+      return
+    }
+    setCallType(type)
+    setIsCallActive(true)
+  }
+
+  const handleEndCall = () => {
+    setIsCallActive(false)
   }
 
   // Auto-scroll to bottom on new messages
@@ -142,10 +159,22 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
         </div>
 
         <div className="flex items-center gap-1 md:gap-2">
-          <Button variant="ghost" size="icon" className="hidden md:flex h-8 w-8 md:h-10 md:w-10">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="hidden md:flex h-8 w-8 md:h-10 md:w-10"
+            onClick={() => handleStartCall('voice')}
+            disabled={conversation?.isGroup}
+          >
             <Phone className="h-4 w-4 md:h-5 md:w-5" />
           </Button>
-          <Button variant="ghost" size="icon" className="hidden md:flex h-8 w-8 md:h-10 md:w-10">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="hidden md:flex h-8 w-8 md:h-10 md:w-10"
+            onClick={() => handleStartCall('video')}
+            disabled={conversation?.isGroup}
+          >
             <Video className="h-4 w-4 md:h-5 md:w-5" />
           </Button>
           <DropdownMenu>
@@ -155,6 +184,14 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem className="md:hidden" onClick={() => handleStartCall('voice')} disabled={conversation?.isGroup}>
+                <Phone className="h-4 w-4 mr-2" />
+                Voice Call
+              </DropdownMenuItem>
+              <DropdownMenuItem className="md:hidden" onClick={() => handleStartCall('video')} disabled={conversation?.isGroup}>
+                <Video className="h-4 w-4 mr-2" />
+                Video Call
+              </DropdownMenuItem>
               <DropdownMenuItem>
                 <Info className="h-4 w-4 mr-2" />
                 Conversation Info
@@ -199,6 +236,16 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
         replyTo={replyTo}
         onCancelReply={() => setReplyTo(null)}
       />
+
+      {/* Call Interface */}
+      {isCallActive && (
+        <CallInterface
+          callerName={displayName}
+          callerImage={displayImage}
+          isVideo={callType === 'video'}
+          onEndCall={handleEndCall}
+        />
+      )}
     </div>
   )
 }
