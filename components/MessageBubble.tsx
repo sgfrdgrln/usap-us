@@ -3,7 +3,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
 import { format, isToday, isYesterday } from 'date-fns'
-import { Check, CheckCheck } from 'lucide-react'
+import { CheckCheck } from 'lucide-react'
+
+
 
 interface MessageBubbleProps {
   message: {
@@ -18,20 +20,20 @@ interface MessageBubbleProps {
     sender?: {
       username: string
       imageUrl?: string
-    }
+    } | null
     reactions?: Array<{
       emoji: string
       userId: string
       user?: {
         username: string
-      }
+      } | null
     }>
     replyTo?: {
       content?: string
       sender?: {
         username: string
-      }
-    }
+      } | null
+    } | null
   }
   isOwnMessage: boolean
   showAvatar: boolean

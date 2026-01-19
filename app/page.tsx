@@ -12,7 +12,6 @@ import { FriendsList } from '@/components/FriendsList'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import {
   Dialog,
@@ -27,7 +26,6 @@ import {
   Users,
   UserPlus,
   Bell,
-  Settings,
   Plus,
   Search,
 } from 'lucide-react'
@@ -37,7 +35,7 @@ export default function Home() {
   const { user, isLoaded } = useUser()
   const currentUser = useQuery(api.users.getCurrentUser)
   const conversations = useQuery(api.conversations.getConversations)
-  const notifications = useQuery(api.notifications.getNotifications, { limit: 10 })
+ // const notifications = useQuery(api.notifications.getNotifications, { limit: 10 })
   const unreadCount = useQuery(api.notifications.getUnreadCount)
   
   const createOrUpdateUser = useMutation(api.users.createOrUpdateUser)
