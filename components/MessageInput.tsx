@@ -128,38 +128,38 @@ export function MessageInput({
   }, [])
 
   return (
-    <div className="border-t bg-background p-4">
+    <div className="border-t bg-background p-2 md:p-4">
       {replyTo && (
-        <div className="mb-2 flex items-center justify-between bg-accent px-3 py-2 rounded-lg">
+        <div className="mb-2 flex items-center justify-between bg-accent px-2 md:px-3 py-1.5 md:py-2 rounded-lg">
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold">Replying to {replyTo.sender?.username}</p>
-            <p className="text-xs text-muted-foreground truncate">{replyTo.content}</p>
+            <p className="text-[10px] md:text-xs font-semibold">Replying to {replyTo.sender?.username}</p>
+            <p className="text-[10px] md:text-xs text-muted-foreground truncate">{replyTo.content}</p>
           </div>
-          <Button variant="ghost" size="icon" onClick={onCancelReply} className="h-6 w-6 ml-2">
-            <X className="h-4 w-4" />
+          <Button variant="ghost" size="icon" onClick={onCancelReply} className="h-5 w-5 md:h-6 md:w-6 ml-2">
+            <X className="h-3 w-3 md:h-4 md:w-4" />
           </Button>
         </div>
       )}
 
-      <div className="flex items-end gap-2">
-        <div className="flex gap-1">
+      <div className="flex items-end gap-1 md:gap-2">
+        <div className="flex gap-0.5 md:gap-1">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => imageInputRef.current?.click()}
             disabled={isRecording}
-            className="h-10 w-10"
+            className="h-8 w-8 md:h-10 md:w-10"
           >
-            <ImageIcon className="h-5 w-5" />
+            <ImageIcon className="h-4 w-4 md:h-5 md:w-5" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => fileInputRef.current?.click()}
             disabled={isRecording}
-            className="h-10 w-10"
+            className="h-8 w-8 md:h-10 md:w-10 hidden sm:flex"
           >
-            <Paperclip className="h-5 w-5" />
+            <Paperclip className="h-4 w-4 md:h-5 md:w-5" />
           </Button>
           <div className="relative">
             <Button
@@ -167,9 +167,9 @@ export function MessageInput({
               size="icon"
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
               disabled={isRecording}
-              className="h-10 w-10"
+              className="h-8 w-8 md:h-10 md:w-10 hidden xs:flex"
             >
-              <Smile className="h-5 w-5" />
+              <Smile className="h-4 w-4 md:h-5 md:w-5" />
             </Button>
             {showEmojiPicker && (
               <div className="absolute bottom-12 left-0 z-50">
@@ -185,12 +185,12 @@ export function MessageInput({
           onKeyPress={handleKeyPress}
           placeholder="Type a message..."
           disabled={isRecording}
-          className="flex-1"
+          className="flex-1 text-sm md:text-base h-8 md:h-10"
         />
 
         {message.trim() ? (
-          <Button onClick={handleSend} size="icon" className="h-10 w-10">
-            <Send className="h-5 w-5" />
+          <Button onClick={handleSend} size="icon" className="h-8 w-8 md:h-10 md:w-10 shrink-0">
+            <Send className="h-4 w-4 md:h-5 md:w-5" />
           </Button>
         ) : (
           <Button
@@ -199,9 +199,9 @@ export function MessageInput({
             onMouseDown={startRecording}
             onMouseUp={stopRecording}
             onMouseLeave={stopRecording}
-            className="h-10 w-10"
+            className="h-8 w-8 md:h-10 md:w-10 shrink-0"
           >
-            <Mic className="h-5 w-5" />
+            <Mic className="h-4 w-4 md:h-5 md:w-5" />
           </Button>
         )}
 
@@ -221,9 +221,10 @@ export function MessageInput({
       </div>
 
       {isRecording && (
-        <div className="mt-2 flex items-center gap-2 text-sm text-destructive">
+        <div className="mt-2 flex items-center gap-2 text-xs md:text-sm text-destructive">
           <div className="h-2 w-2 rounded-full bg-destructive animate-pulse" />
-          Recording... Release to send
+          <span className="hidden xs:inline">Recording... Release to send</span>
+          <span className="xs:hidden">Recording...</span>
         </div>
       )}
     </div>

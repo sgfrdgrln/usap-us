@@ -47,35 +47,35 @@ export function ConversationItem({ conversation, isActive, onClick }: Conversati
     <button
       onClick={onClick}
       className={cn(
-        'w-full flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-accent',
+        'w-full flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg transition-colors hover:bg-accent',
         isActive && 'bg-accent'
       )}
     >
-      <Avatar className="h-12 w-12">
+      <Avatar className="h-10 w-10 md:h-12 md:w-12 shrink-0">
         <AvatarImage src={conversation.displayImage} />
-        <AvatarFallback className="bg-primary/10 text-primary">
+        <AvatarFallback className="bg-primary/10 text-primary text-xs md:text-sm">
           {getInitials(conversation.displayName)}
         </AvatarFallback>
       </Avatar>
       
       <div className="flex-1 min-w-0 text-left">
-        <div className="flex items-center justify-between mb-1">
-          <span className="font-semibold text-sm truncate">
+        <div className="flex items-center justify-between mb-0.5 md:mb-1">
+          <span className="font-semibold text-xs md:text-sm truncate">
             {conversation.displayName || 'Unknown'}
           </span>
           {conversation.lastMessage && (
-            <span className="text-xs text-muted-foreground ml-2">
+            <span className="text-[10px] md:text-xs text-muted-foreground ml-2 shrink-0">
               {formatDistanceToNow(conversation.lastMessage.sentAt, { addSuffix: false })}
             </span>
           )}
         </div>
         
         <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground truncate">
+          <p className="text-xs md:text-sm text-muted-foreground truncate">
             {getLastMessagePreview()}
           </p>
           {conversation.unreadCount > 0 && (
-            <Badge variant="default" className="ml-2 h-5 min-w-5 flex items-center justify-center px-1.5">
+            <Badge variant="default" className="ml-2 h-4 min-w-4 md:h-5 md:min-w-5 flex items-center justify-center px-1 md:px-1.5 text-[10px] md:text-xs">
               {conversation.unreadCount > 99 ? '99+' : conversation.unreadCount}
             </Badge>
           )}

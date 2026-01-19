@@ -117,41 +117,41 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="border-b p-4 flex items-center justify-between bg-background">
-        <div className="flex items-center gap-3">
-          <Avatar className="h-10 w-10">
+      <div className="border-b p-3 md:p-4 flex items-center justify-between bg-background">
+        <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
+          <Avatar className="h-8 w-8 md:h-10 md:w-10 shrink-0">
             <AvatarImage src={displayImage} />
-            <AvatarFallback className="bg-primary/10 text-primary">
+            <AvatarFallback className="bg-primary/10 text-primary text-xs md:text-sm">
               {getInitials(displayName)}
             </AvatarFallback>
           </Avatar>
-          <div>
-            <h2 className="font-semibold">{displayName}</h2>
+          <div className="min-w-0 flex-1">
+            <h2 className="font-semibold text-sm md:text-base truncate">{displayName}</h2>
             {typingIndicators && typingIndicators.length > 0 ? (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs md:text-sm text-muted-foreground truncate">
                 {typingIndicators.map((t) => t.user?.username).join(', ')} typing...
               </p>
             ) : !conversation.isGroup && otherMember?.status ? (
-              <p className="text-sm text-muted-foreground capitalize">{otherMember.status}</p>
+              <p className="text-xs md:text-sm text-muted-foreground capitalize">{otherMember.status}</p>
             ) : conversation.isGroup ? (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs md:text-sm text-muted-foreground">
                 {conversation.members?.length} members
               </p>
             ) : null}
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon">
-            <Phone className="h-5 w-5" />
+        <div className="flex items-center gap-1 md:gap-2">
+          <Button variant="ghost" size="icon" className="hidden md:flex h-8 w-8 md:h-10 md:w-10">
+            <Phone className="h-4 w-4 md:h-5 md:w-5" />
           </Button>
-          <Button variant="ghost" size="icon">
-            <Video className="h-5 w-5" />
+          <Button variant="ghost" size="icon" className="hidden md:flex h-8 w-8 md:h-10 md:w-10">
+            <Video className="h-4 w-4 md:h-5 md:w-5" />
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <MoreVertical className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="h-8 w-8 md:h-10 md:w-10">
+                <MoreVertical className="h-4 w-4 md:h-5 md:w-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -169,7 +169,7 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
       </div>
 
       {/* Messages */}
-      <ScrollArea className="flex-1 p-4">
+      <ScrollArea className="flex-1 p-2 md:p-4">
         <div className="space-y-1">
           {messages.map((message, index) => {
             const prevMessage = index > 0 ? messages[index - 1] : null

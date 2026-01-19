@@ -13,6 +13,7 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Dialog,
   DialogContent,
@@ -28,6 +29,7 @@ import {
   Bell,
   Plus,
   Search,
+  ArrowLeft,
 } from 'lucide-react'
 import { UserButton } from '@clerk/nextjs'
 
@@ -35,6 +37,7 @@ export default function Home() {
   const { user, isLoaded } = useUser()
   const currentUser = useQuery(api.users.getCurrentUser)
   const conversations = useQuery(api.conversations.getConversations)
+  const friends = useQuery(api.friends.getFriends)
  // const notifications = useQuery(api.notifications.getNotifications, { limit: 10 })
   const unreadCount = useQuery(api.notifications.getUnreadCount)
   
@@ -76,16 +79,29 @@ export default function Home() {
 
   const handleCreateGroup = async () => {
     if (groupName.trim() && selectedMembers.length > 0) {
-      const conversationId = await createConversation({
-        isGroup: true,
-        name: groupName,
-        memberIds: selectedMembers as Id<'users'>[],
-      })
-      setSelectedConversation(conversationId)
-      setShowNewGroupDialog(false)
-      setGroupName('')
-      setSelectedMembers([])
+      try {
+        const conversationId = await createConversation({
+          isGroup: true,
+          name: groupName,
+          memberIds: selectedMembers as Id<'users'>[],
+        })
+        setSelectedConversation(conversationId)
+        setShowNewGroupDialog(false)
+        setGroupName('')
+        setSelectedMembers([])
+        setActiveView('chats')
+      } catch (error) {
+        console.error('Failed to create group:', error)
+      }
     }
+  }
+
+  const toggleMemberSelection = (userId: string) => {
+    setSelectedMembers(prev => 
+      prev.includes(userId) 
+        ? prev.filter(id => id !== userId)
+        : [...prev, userId]
+    )
   }
 
   if (!isLoaded || !user) {
@@ -114,21 +130,21 @@ export default function Home() {
   }
 
   return (
-    <div className="flex h-screen bg-background">
-      {/* Sidebar */}
-      <div className="w-80 border-r flex flex-col bg-card">
+    <div className="flex h-screen bg-background overflow-hidden">
+      {/* Sidebar - Hidden on mobile when conversation is selected */}
+      <div className={`w-full md:w-80 border-r flex flex-col bg-card md:relative h-full ${selectedConversation ? 'hidden md:flex' : 'flex'}`}>
         {/* Header */}
-        <div className="p-4 border-b space-y-3">
+        <div className="p-3 md:p-4 border-b space-y-3">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-primary">UsapUs</h1>
-            <div className="flex items-center gap-2">
+            <h1 className="text-xl md:text-2xl font-bold text-primary">UsapUs</h1>
+            <div className="flex items-center gap-1 md:gap-2">
               <ThemeToggle />
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="relative h-8 w-8 md:h-10 md:w-10">
+                <Bell className="h-4 w-4 md:h-5 md:w-5" />
                 {unreadCount && unreadCount > 0 && (
                   <Badge
                     variant="destructive"
-                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                    className="absolute -top-1 -right-1 h-4 w-4 md:h-5 md:w-5 flex items-center justify-center p-0 text-[10px] md:text-xs"
                   >
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </Badge>
@@ -139,33 +155,33 @@ export default function Home() {
           </div>
 
           {/* Navigation */}
-          <div className="flex gap-2">
+          <div className="flex gap-1.5 md:gap-2">
             <Button
               variant={activeView === 'chats' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setActiveView('chats')}
-              className="flex-1"
+              className="flex-1 text-xs md:text-sm px-2"
             >
-              <MessageSquare className="h-4 w-4 mr-1" />
-              Chats
+              <MessageSquare className="h-3.5 w-3.5 md:h-4 md:w-4 md:mr-1" />
+              <span className="hidden sm:inline ml-1">Chats</span>
             </Button>
             <Button
               variant={activeView === 'friends' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setActiveView('friends')}
-              className="flex-1"
+              className="flex-1 text-xs md:text-sm px-2"
             >
-              <Users className="h-4 w-4 mr-1" />
-              Friends
+              <Users className="h-3.5 w-3.5 md:h-4 md:w-4 md:mr-1" />
+              <span className="hidden sm:inline ml-1">Friends</span>
             </Button>
             <Button
               variant={activeView === 'search' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setActiveView('search')}
-              className="flex-1"
+              className="flex-1 text-xs md:text-sm px-2"
             >
-              <Search className="h-4 w-4 mr-1" />
-              Find
+              <Search className="h-3.5 w-3.5 md:h-4 md:w-4 md:mr-1" />
+              <span className="hidden sm:inline ml-1">Find</span>
             </Button>
           </div>
         </div>
@@ -184,21 +200,79 @@ export default function Home() {
                       <Plus className="h-4 w-4" />
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="max-w-md">
                     <DialogHeader>
                       <DialogTitle>Create Group Chat</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4">
-                      <Input
-                        placeholder="Group name"
-                        value={groupName}
-                        onChange={(e) => setGroupName(e.target.value)}
-                      />
-                      <p className="text-sm text-muted-foreground">
-                        Select friends to add to the group (feature in progress)
-                      </p>
-                      <Button onClick={handleCreateGroup} disabled={!groupName.trim()}>
-                        Create Group
+                      <div>
+                        <Input
+                          placeholder="Group name"
+                          value={groupName}
+                          onChange={(e) => setGroupName(e.target.value)}
+                        />
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-sm font-medium">
+                            Select Friends
+                          </p>
+                          {selectedMembers.length > 0 && (
+                            <Badge variant="secondary" className="text-xs">
+                              {selectedMembers.length} selected
+                            </Badge>
+                          )}
+                        </div>
+                        
+                        <ScrollArea className="h-[200px] border rounded-md p-2">
+                          {friends && friends.length > 0 ? (
+                            <div className="space-y-1">
+                              {friends.map((friend) => (
+                                <div
+                                  key={friend._id}
+                                  onClick={() => toggleMemberSelection(friend._id)}
+                                  className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer hover:bg-accent transition-colors ${
+                                    selectedMembers.includes(friend._id) ? 'bg-accent' : ''
+                                  }`}
+                                >
+                                  <div className={`h-4 w-4 rounded border-2 flex items-center justify-center shrink-0 ${
+                                    selectedMembers.includes(friend._id) 
+                                      ? 'bg-primary border-primary' 
+                                      : 'border-muted-foreground'
+                                  }`}>
+                                    {selectedMembers.includes(friend._id) && (
+                                      <svg className="h-3 w-3 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                      </svg>
+                                    )}
+                                  </div>
+                                  <Avatar className="h-8 w-8">
+                                    <AvatarImage src={friend.imageUrl} />
+                                    <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                                      {friend.username?.slice(0, 2).toUpperCase()}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium truncate">{friend.username}</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="text-center py-8 text-sm text-muted-foreground">
+                              No friends yet. Add friends to create a group!
+                            </div>
+                          )}
+                        </ScrollArea>
+                      </div>
+
+                      <Button 
+                        onClick={handleCreateGroup} 
+                        disabled={!groupName.trim() || selectedMembers.length === 0}
+                        className="w-full"
+                      >
+                        Create Group {selectedMembers.length > 0 && `(${selectedMembers.length + 1} members)`}
                       </Button>
                     </div>
                   </DialogContent>
@@ -257,26 +331,46 @@ export default function Home() {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1">
+      <div className="flex-1 relative w-full">
         {selectedConversation ? (
-          <ChatView
-            conversationId={selectedConversation}
-            currentUserId={currentUser?._id}
-          />
+          <>
+            {/* Mobile back button */}
+            <div className="md:hidden absolute top-3 left-3 z-10">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setSelectedConversation(null)}
+                className="bg-background/80 backdrop-blur-sm"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            </div>
+            <ChatView
+              conversationId={selectedConversation}
+              currentUserId={currentUser?._id}
+            />
+          </>
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
-            <div className="space-y-4 max-w-md">
-              <div className="text-6xl mb-4">💬</div>
-              <h2 className="text-3xl font-bold text-primary">Welcome to UsapUs</h2>
-              <p className="text-muted-foreground">
+            <div className="space-y-3 md:space-y-4 max-w-md">
+              <div className="text-4xl md:text-6xl mb-2 md:mb-4">💬</div>
+              <h2 className="text-2xl md:text-3xl font-bold text-primary">Welcome to UsapUs</h2>
+              <p className="text-sm md:text-base text-muted-foreground">
                 Select a conversation to start messaging, or find new friends to chat with!
               </p>
-              <div className="flex gap-2 justify-center mt-6">
-                <Button onClick={() => setActiveView('search')}>
+              <div className="flex flex-col sm:flex-row gap-2 justify-center mt-4 md:mt-6">
+                <Button 
+                  onClick={() => setActiveView('search')}
+                  className="w-full sm:w-auto"
+                >
                   <UserPlus className="h-4 w-4 mr-2" />
                   Find Friends
                 </Button>
-                <Button variant="outline" onClick={() => setShowNewGroupDialog(true)}>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowNewGroupDialog(true)}
+                  className="w-full sm:w-auto"
+                >
                   <Users className="h-4 w-4 mr-2" />
                   New Group
                 </Button>

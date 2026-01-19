@@ -77,9 +77,9 @@ export function MessageBubble({ message, isOwnMessage, showAvatar, onReact, onRe
           <img
             src={message.fileUrl}
             alt="Shared image"
-            className="rounded-lg max-w-sm max-h-96 object-cover"
+            className="rounded-lg max-w-[250px] sm:max-w-sm max-h-64 sm:max-h-96 object-cover w-full"
           />
-          {message.content && <p className="text-sm">{message.content}</p>}
+          {message.content && <p className="text-xs md:text-sm">{message.content}</p>}
         </div>
       )
     }
@@ -92,10 +92,10 @@ export function MessageBubble({ message, isOwnMessage, showAvatar, onReact, onRe
           rel="noopener noreferrer"
           className="flex items-center gap-2 p-2 rounded bg-accent hover:bg-accent/80"
         >
-          <span className="text-2xl">📎</span>
+          <span className="text-xl md:text-2xl">📎</span>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">{message.fileName}</p>
-            <p className="text-xs text-muted-foreground">Click to download</p>
+            <p className="text-xs md:text-sm font-medium truncate">{message.fileName}</p>
+            <p className="text-[10px] md:text-xs text-muted-foreground">Click to download</p>
           </div>
         </a>
       )
@@ -104,15 +104,15 @@ export function MessageBubble({ message, isOwnMessage, showAvatar, onReact, onRe
     if (message.messageType === 'voice' && message.fileUrl) {
       return (
         <div className="flex items-center gap-2">
-          <span className="text-2xl">🎤</span>
-          <audio controls className="max-w-xs">
+          <span className="text-xl md:text-2xl">🎤</span>
+          <audio controls className="max-w-[200px] sm:max-w-xs w-full h-8">
             <source src={message.fileUrl} type="audio/webm" />
           </audio>
         </div>
       )
     }
 
-    return <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+    return <p className="text-xs md:text-sm whitespace-pre-wrap overflow-wrap-anywhere">{message.content}</p>
   }
 
   const groupedReactions = message.reactions?.reduce((acc, reaction) => {
@@ -124,38 +124,38 @@ export function MessageBubble({ message, isOwnMessage, showAvatar, onReact, onRe
   }, {} as Record<string, typeof message.reactions>)
 
   return (
-    <div className={cn('flex gap-2 mb-4', isOwnMessage && 'flex-row-reverse')}>
+    <div className={cn('flex gap-1.5 md:gap-2 mb-3 md:mb-4', isOwnMessage && 'flex-row-reverse')}>
       {showAvatar ? (
-        <Avatar className="h-8 w-8 mt-1">
+        <Avatar className="h-6 w-6 md:h-8 md:w-8 mt-1 shrink-0">
           <AvatarImage src={message.sender?.imageUrl} />
-          <AvatarFallback className="bg-primary/10 text-primary text-xs">
+          <AvatarFallback className="bg-primary/10 text-primary text-[10px] md:text-xs">
             {getInitials(message.sender?.username)}
           </AvatarFallback>
         </Avatar>
       ) : (
-        <div className="h-8 w-8" />
+        <div className="h-6 w-6 md:h-8 md:w-8" />
       )}
 
-      <div className={cn('flex flex-col max-w-[70%]', isOwnMessage && 'items-end')}>
+      <div className={cn('flex flex-col max-w-[85%] sm:max-w-[75%] md:max-w-[70%]', isOwnMessage && 'items-end')}>
         {showAvatar && !isOwnMessage && (
-          <span className="text-xs text-muted-foreground mb-1 px-1">
+          <span className="text-[10px] md:text-xs text-muted-foreground mb-1 px-1">
             {message.sender?.username}
           </span>
         )}
 
         {message.replyTo && (
           <div className={cn(
-            'px-3 py-1 mb-1 rounded text-xs bg-accent/50 border-l-2',
+            'px-2 md:px-3 py-1 mb-1 rounded text-[10px] md:text-xs bg-accent/50 border-l-2',
             isOwnMessage ? 'border-primary' : 'border-muted-foreground'
           )}>
-            <p className="font-semibold">{message.replyTo.sender?.username}</p>
+            <p className="font-semibold truncate">{message.replyTo.sender?.username}</p>
             <p className="text-muted-foreground truncate">{message.replyTo.content}</p>
           </div>
         )}
 
         <div
           className={cn(
-            'px-4 py-2 rounded-2xl',
+            'px-3 py-1.5 md:px-4 md:py-2 rounded-2xl overflow-wrap-anywhere',
             isOwnMessage
               ? 'bg-primary text-primary-foreground rounded-br-sm'
               : 'bg-accent rounded-bl-sm'
@@ -163,9 +163,9 @@ export function MessageBubble({ message, isOwnMessage, showAvatar, onReact, onRe
         >
           {renderMessageContent()}
           
-          <div className={cn('flex items-center gap-2 mt-1', isOwnMessage && 'justify-end')}>
+          <div className={cn('flex items-center gap-1 md:gap-2 mt-1', isOwnMessage && 'justify-end')}>
             <span className={cn(
-              'text-xs',
+              'text-[10px] md:text-xs',
               isOwnMessage ? 'text-primary-foreground/70' : 'text-muted-foreground'
             )}>
               {formatMessageTime(message.sentAt)}

@@ -44,46 +44,48 @@ export function FriendsList() {
       {/* Friend Requests */}
       {friendRequests && friendRequests.length > 0 && (
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center justify-between text-base md:text-lg">
               Friend Requests
-              <Badge>{friendRequests.length}</Badge>
+              <Badge className="text-xs">{friendRequests.length}</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {friendRequests.map((request) => (
               <div
                 key={request._id}
-                className="flex items-center justify-between p-3 rounded-lg bg-accent"
+                className="flex items-center justify-between p-2 md:p-3 rounded-lg bg-accent"
               >
-                <div className="flex items-center gap-3">
-                  <Avatar>
+                <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
+                  <Avatar className="h-8 w-8 md:h-10 md:w-10 shrink-0">
                     <AvatarImage src={request.sender?.imageUrl} />
-                    <AvatarFallback className="bg-primary/10 text-primary">
+                    <AvatarFallback className="bg-primary/10 text-primary text-xs">
                       {getInitials(request.sender?.username)}
                     </AvatarFallback>
                   </Avatar>
-                  <div>
-                    <p className="font-semibold text-sm">{request.sender?.username}</p>
-                    <p className="text-xs text-muted-foreground">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-xs md:text-sm truncate">{request.sender?.username}</p>
+                    <p className="text-[10px] md:text-xs text-muted-foreground truncate">
                       {request.sender?.email}
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-1 md:gap-2 shrink-0">
                   <Button
                     size="sm"
                     variant="default"
                     onClick={() => handleAccept(request._id)}
+                    className="h-7 w-7 md:h-8 md:w-8 p-0"
                   >
-                    <Check className="h-4 w-4" />
+                    <Check className="h-3 w-3 md:h-4 md:w-4" />
                   </Button>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => handleReject(request._id)}
+                    className="h-7 w-7 md:h-8 md:w-8 p-0"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-3 w-3 md:h-4 md:w-4" />
                   </Button>
                 </div>
               </div>
@@ -94,10 +96,10 @@ export function FriendsList() {
 
       {/* Friends List */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center justify-between text-base md:text-lg">
             Friends
-            <Badge variant="secondary">{friends?.length || 0}</Badge>
+            <Badge variant="secondary" className="text-xs">{friends?.length || 0}</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -105,23 +107,23 @@ export function FriendsList() {
             friends.map((friend) => (
               <div
                 key={friend._id}
-                className="flex items-center justify-between p-3 rounded-lg hover:bg-accent"
+                className="flex items-center justify-between p-2 md:p-3 rounded-lg hover:bg-accent"
               >
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <Avatar>
+                <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
+                  <div className="relative shrink-0">
+                    <Avatar className="h-8 w-8 md:h-10 md:w-10">
                       <AvatarImage src={friend.imageUrl} />
-                      <AvatarFallback className="bg-primary/10 text-primary">
+                      <AvatarFallback className="bg-primary/10 text-primary text-xs">
                         {getInitials(friend.username)}
                       </AvatarFallback>
                     </Avatar>
                     {friend.status === 'online' && (
-                      <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-background" />
+                      <div className="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 border-2 border-background" />
                     )}
                   </div>
-                  <div>
-                    <p className="font-semibold text-sm">{friend.username}</p>
-                    <p className="text-xs text-muted-foreground capitalize">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-xs md:text-sm truncate">{friend.username}</p>
+                    <p className="text-[10px] md:text-xs text-muted-foreground capitalize">
                       {friend.status || 'offline'}
                     </p>
                   </div>
@@ -130,13 +132,14 @@ export function FriendsList() {
                   size="sm"
                   variant="ghost"
                   onClick={() => handleRemoveFriend(friend._id)}
+                  className="h-7 w-7 md:h-8 md:w-8 p-0 shrink-0"
                 >
-                  <UserMinus className="h-4 w-4" />
+                  <UserMinus className="h-3 w-3 md:h-4 md:w-4" />
                 </Button>
               </div>
             ))
           ) : (
-            <p className="text-center text-sm text-muted-foreground py-4">
+            <p className="text-center text-xs md:text-sm text-muted-foreground py-4">
               No friends yet
             </p>
           )}

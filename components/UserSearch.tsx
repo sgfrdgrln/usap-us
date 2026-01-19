@@ -33,44 +33,46 @@ export function UserSearch({ onSelectUser }: UserSearchProps) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Search className="h-5 w-5" />
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+          <Search className="h-4 w-4 md:h-5 md:w-5" />
           Find Users
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 md:space-y-4">
         <Input
           placeholder="Search by username or email..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          className="text-sm md:text-base"
         />
 
         {searchResults && searchResults.length > 0 && (
-          <div className="space-y-2 max-h-96 overflow-y-auto">
+          <div className="space-y-2 max-h-80 md:max-h-96 overflow-y-auto">
             {searchResults.map((user) => (
               <div
                 key={user._id}
-                className="flex items-center justify-between p-3 rounded-lg hover:bg-accent"
+                className="flex items-center justify-between p-2 md:p-3 rounded-lg hover:bg-accent"
               >
-                <div className="flex items-center gap-3">
-                  <Avatar>
+                <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
+                  <Avatar className="h-8 w-8 md:h-10 md:w-10 shrink-0">
                     <AvatarImage src={user.imageUrl} />
-                    <AvatarFallback className="bg-primary/10 text-primary">
+                    <AvatarFallback className="bg-primary/10 text-primary text-xs">
                       {getInitials(user.username)}
                     </AvatarFallback>
                   </Avatar>
-                  <div>
-                    <p className="font-semibold text-sm">{user.username}</p>
-                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-xs md:text-sm truncate">{user.username}</p>
+                    <p className="text-[10px] md:text-xs text-muted-foreground truncate">{user.email}</p>
                   </div>
                 </div>
                 <Button
                   size="sm"
                   onClick={() => onSelectUser?.(user._id)}
+                  className="shrink-0 h-7 md:h-8 text-xs md:text-sm px-2 md:px-3"
                 >
-                  <UserPlus className="h-4 w-4 mr-1" />
-                  Add
+                  <UserPlus className="h-3 w-3 md:h-4 md:w-4 md:mr-1" />
+                  <span className="hidden sm:inline ml-1">Add</span>
                 </Button>
               </div>
             ))}
@@ -78,7 +80,7 @@ export function UserSearch({ onSelectUser }: UserSearchProps) {
         )}
 
         {searchResults && searchResults.length === 0 && searchTerm.length > 0 && (
-          <p className="text-center text-sm text-muted-foreground py-4">
+          <p className="text-center text-xs md:text-sm text-muted-foreground py-4">
             No users found
           </p>
         )}
